@@ -1,0 +1,14 @@
+# Fichier de l'armée Rouge
+GENERAL: CaptainBRAINDEAD
+
+# 10 Piquiers en ligne
+Pikeman, 52.0, 8.0
+Pikeman, 52.0, 9.0
+Pikeman, 52.0, 10.0
+Pikeman, 52.0, 11.0
+Pikeman, 52.0, 12.0
+Pikeman, 52.0, 13.0
+Pikeman, 52.0, 14.0
+Pikeman, 52.0, 15.0
+Pikeman, 52.0, 16.0
+Pikeman, 52.0, 17.0

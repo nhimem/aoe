@@ -1,0 +1,6 @@
+GENERAL: MajorDAFT
+Pikeman, 30.0, 10.0
+Pikeman, 30.0, 12.0
+Pikeman, 30.0, 14.0
+Pikeman, 30.0, 16.0
+Pikeman, 30.0, 18.0

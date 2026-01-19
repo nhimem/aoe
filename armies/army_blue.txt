@@ -1,0 +1,6 @@
+GENERAL: ColonelKAISER
+Crossbowman, 10.0, 10.0
+Crossbowman, 10.0, 12.0
+Crossbowman, 10.0, 14.0
+Crossbowman, 10.0, 16.0
+Crossbowman, 10.0, 18.0
