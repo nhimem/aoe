@@ -4,16 +4,16 @@ from view.gui_view import PygameView, BG_COLOR, RED, GREEN, BLUE, BLACK
 from extensions.custom_units import NatureTree, House, GameCastle
 
 # Định nghĩa đường dẫn
-ASSET_DIR = "assets/resources"
-BUILDING_DIR = os.path.join(ASSET_DIR, "buildings")
-NATURE_DIR = os.path.join(ASSET_DIR, "natures")
+ASSET_DIR = "assets/resources" #định nghĩa đường dẫn
+BUILDING_DIR = os.path.join(ASSET_DIR, "buildings") #Thư mục chứa ảnh nhà
+NATURE_DIR = os.path.join(ASSET_DIR, "natures") #Thư mục chứa ảnh cây
 
 
 class CustomPygameView(PygameView):
     def __init__(self, map_instance, armies):
-        super().__init__(map_instance, armies)
-        self.nature_units = []  # Danh sách chứa cây cối (vẽ riêng)
-        self._load_custom_sprites()
+        super().__init__(map_instance, armies) #Gọi hàm khởi tạo của cha
+        self.nature_units = []  # Danh sách chứa cây cối (vẽ riêng): list riêng chứa cây vì cây không thuộc team nào
+        self._load_custom_sprites() #Tải ảnh ngay khi khởi tạo
 
     def set_nature_units(self, nature_list):
         """
@@ -22,25 +22,27 @@ class CustomPygameView(PygameView):
         """
         self.nature_units = nature_list
 
-    def _load_custom_sprites(self):
+    def _load_custom_sprites(self): #Tải tài nguyên
         try:
             # 1. Load Buildings (Castle & House)
             self.custom_images = {
                 'castle': self._safe_load_image(os.path.join(BUILDING_DIR, "castle.png")),
-                'house1': self._safe_load_image(os.path.join(BUILDING_DIR, "house1.png")),
-                'house2': self._safe_load_image(os.path.join(BUILDING_DIR, "house2.png")),
-            }
+                'house1': self._safe_load_image(os.path.join(BUILDING_DIR, "house1.png")), #Nhà team xanh
+                'house2': self._safe_load_image(os.path.join(BUILDING_DIR, "house2.png")), #Nhà team đỏ
+            } #Tạo từ điển self.custom_images để lưu ảnh công trình
 
+            
             # 2. Load Trees (Nature)
             self.tree_images = {}
             # Scale ảnh cây về khoảng 70x80px cho vừa ô grid nhưng vẫn cao ráo
-            TARGET_SIZE = (70, 80)
+            TARGET_SIZE = (70, 80) #Kích thước chuẩn hoá cho cây => Ảnh gốc của cây có thể rất to hoặc nhỏ. Dòng này ép kích thước về 1 chuẩn để khi vẽ lên bản đồ => không bị lệch grid
+            
 
-            for t_type in [1, 2, 3, 4]:
+            for t_type in [1, 2, 3, 4]: #Duyệt qua 4 loại cây
                 self.tree_images[t_type] = {}
                 folder_path = os.path.join(NATURE_DIR, f"tree_{t_type}")
 
-                if not os.path.exists(folder_path):
+                if not os.path.exists(folder_path): #Kiểm tra thư mục tồn tại
                     continue
 
                 # Lấy danh sách ảnh png, sort để đảm bảo thứ tự variant
@@ -223,4 +225,5 @@ class CustomPygameView(PygameView):
         Logic vẽ Map và Unit đã được CustomPygameView xử lý (bao gồm Cây).
         Logic vẽ UI (bảng thống kê) sẽ do lớp cha xử lý (chỉ hiện Army chính).
         """
+
         return super().display(armies, time_elapsed, paused, speed_multiplier)
