@@ -1,5 +1,7 @@
 from core.unit import Unit, Wonder, UC_BUILDING
+#Unit: Class cơ sở cho mọi thực thể trong game
 
+#Tạo ra 3 class đại diện cho Castle (Lâu đài), House (nhà dân), và Cây cối (NatureTree)
 # Giữ nguyên GameCastle và House
 class GameCastle(Wonder):
     def __init__(self, unit_id: int, army_id: int, pos: tuple[float, float]):
@@ -38,4 +40,5 @@ class NatureTree(Unit):
         # tree_type: 1, 2 (Team 1) hoặc 3, 4 (Team 2)
         # variant: 0..6 (Index của ảnh trong folder)
         self.tree_type = tree_type
+
         self.variant = variant
