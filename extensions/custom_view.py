@@ -2,6 +2,9 @@ import pygame
 import os
 from view.gui_view import PygameView, BG_COLOR, RED, GREEN, BLUE, BLACK
 from extensions.custom_units import NatureTree, House, GameCastle
+#Thêm khả năng vẽ hình ảnh tĩnh + xử lý việc hiển thị 2.5D (vật ở gần che vật ở xa)
+
+#os.path.join => nối chuỗi đường dẫn, tự chọn dấu phân cách phù hợp tuỳ vào OS
 
 # Định nghĩa đường dẫn
 ASSET_DIR = "assets/resources" #định nghĩa đường dẫn
@@ -22,8 +25,8 @@ class CustomPygameView(PygameView):
         """
         self.nature_units = nature_list
 
-    def _load_custom_sprites(self): #Tải tài nguyên
-        try:
+    def _load_custom_sprites(self): #Tải công trình
+        try: 
             # 1. Load Buildings (Castle & House)
             self.custom_images = {
                 'castle': self._safe_load_image(os.path.join(BUILDING_DIR, "castle.png")),
@@ -32,13 +35,14 @@ class CustomPygameView(PygameView):
             } #Tạo từ điển self.custom_images để lưu ảnh công trình
 
             
-            # 2. Load Trees (Nature)
+            # 2. Load Trees (Nature) Tải cây
             self.tree_images = {}
             # Scale ảnh cây về khoảng 70x80px cho vừa ô grid nhưng vẫn cao ráo
             TARGET_SIZE = (70, 80) #Kích thước chuẩn hoá cho cây => Ảnh gốc của cây có thể rất to hoặc nhỏ. Dòng này ép kích thước về 1 chuẩn để khi vẽ lên bản đồ => không bị lệch grid
             
 
             for t_type in [1, 2, 3, 4]: #Duyệt qua 4 loại cây
+                #VD Cấu trúc lưu trữ là: tree_images[1][0]
                 self.tree_images[t_type] = {}
                 folder_path = os.path.join(NATURE_DIR, f"tree_{t_type}")
 
@@ -75,21 +79,23 @@ class CustomPygameView(PygameView):
         Trả về None nếu là lính thường (để dùng logic sprite của cha).
         """
         # 1. Cây (NatureTree)
+        #Lấy ảnh từ dict tree_images dựa trên tree_type và variant
         if isinstance(unit, NatureTree):
             t_type = getattr(unit, 'tree_type', 1)
             variant = getattr(unit, 'variant', 0)
             return self.tree_images.get(t_type, {}).get(variant, None)
 
-        # 2. Nhà (House)
+        # 2. Nhà (House): chọn nhà xanh (house1) cho team 0, nhà đỏ cho team 1
         if isinstance(unit, House):
             return self.custom_images['house1'] if unit.army_id == 0 else self.custom_images['house2']
 
-        # 3. Lâu đài (Castle)
+        # 3. Lâu đài (Castle) #Trả về ảnh castle
         if isinstance(unit, GameCastle):
             return self.custom_images['castle']
 
-        return None
+        return None #Nếu là lính thường => trả về None
 
+    #Vẽ lên màn hình: kỹ thuật DEPTH SORTING: Sắp xếp chiều sâu
     def draw_units(self, armies):
         """
         Ghi đè hoàn toàn hàm vẽ units để xử lý hỗn hợp:
@@ -108,8 +114,9 @@ class CustomPygameView(PygameView):
                 visible_units.append((army.army_id, unit))
 
         # 3. Sắp xếp theo trục Y (Depth Sorting) để vật ở dưới che vật ở trên
+        # Trong góc nhìn từ trên xuống, vật nào đứng thấp hơn trên màn hình (toạ độ Y lớn hơn) thì ở gần mắt người xem hơn => vẽ sau để đè lên vật ở xa
         # Sắp xếp theo: Y -> X -> Unit ID
-        visible_units.sort(key=lambda p: (round(p[1].pos[1], 1), round(p[1].pos[0], 1), p[1].unit_id))
+        visible_units.sort(key=lambda p: (round(p[1].pos[1], 1), round(p[1].pos[0], 1), p[1].unit_id)) #Sắp xếp danh sách vẽ: vẽ vật ở xa trc, gần sau
 
         for army_id, unit in visible_units:
             # Bỏ qua unit đã chết (trừ khi là lính đang có animation chết)
@@ -227,3 +234,4 @@ class CustomPygameView(PygameView):
         """
 
         return super().display(armies, time_elapsed, paused, speed_multiplier)
+
